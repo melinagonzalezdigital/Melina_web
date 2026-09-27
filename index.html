@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Melina González Álvarez — Fotografía</title>
+<meta name="description" content="Portfolio de la fotógrafa Melina González Álvarez. Eventos, rugby, hockey, retratos y paisajes.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<style>
+  :root{
+    --bg: #0b0b0a;
+    --bg-soft: #131311;
+    --fg: #f3f1ec;
+    --muted: #9a968d;
+    --line: rgba(243,241,236,0.12);
+    --accent: #c9a87c;
+    --accent-dim: rgba(201,168,124,0.18);
+    --overlay: rgba(0,0,0,0.55);
+    --serif: 'Fraunces', serif;
+    --sans: 'Inter', sans-serif;
+  }
+
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  img{ max-width:100%; display:block; }
+  a{ color: inherit; text-decoration:none; }
+  button{ font-family: inherit; cursor:pointer; }
+
+  :focus-visible{
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+  }
+
+  /* ---------- Top bar ---------- */
+  .topbar{
+    position: fixed;
+    top:0; left:0; right:0;
+    z-index: 40;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding: 22px 5vw;
+    mix-blend-mode: difference;
+  }
+  .topbar .wordmark{
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 15px;
+    letter-spacing: 0.08em;
+    color: var(--fg);
+  }
+  .topbar nav{ display:flex; gap: 28px; font-size: 13px; color: var(--fg); }
+  .topbar nav a{ padding: 4px 0; border-bottom: 1px solid transparent; }
+  .topbar nav a:hover{ border-color: currentColor; }
+
+  main{ min-height: 100vh; }
+  section{ display:none; }
+  section.active{ display:block; }
+
+  /* ---------- Hero ---------- */
+  .hero{
+    position: relative;
+    height: 92vh;
+    min-height: 560px;
+    display:flex;
+    align-items:flex-end;
+    padding: 0 5vw 64px;
+    background:
+      radial-gradient(120% 90% at 20% 0%, rgba(255,255,255,0.06), transparent 55%),
+      linear-gradient(180deg, #1c1b18 0%, #0e0d0c 62%, #0b0b0a 100%);
+    overflow:hidden;
+  }
+  .hero::before{
+    content:"";
+    position:absolute; inset:0;
+    background-image: var(--hero-pattern);
+    opacity: 0.9;
+  }
+  .hero-inner{ position:relative; z-index:2; max-width: 900px; }
+  .hero-eyebrow{
+    font-size: 13px;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+    margin: 0 0 18px;
+  }
+  .hero h1{
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: clamp(40px, 8vw, 96px);
+    line-height: 0.98;
+    margin: 0 0 20px;
+  }
+  .hero p{
+    font-size: 17px;
+    color: var(--muted);
+    max-width: 46ch;
+    line-height: 1.6;
+    margin: 0;
+  }
+  .hero-scroll{
+    position:absolute; right: 5vw; bottom: 40px;
+    font-size: 12px; color: var(--muted); z-index:2;
+    writing-mode: vertical-rl;
+    letter-spacing: 0.08em;
+  }
+
+  /* ---------- Category grid ---------- */
+  .section-head{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    padding: 72px 5vw 28px;
+    border-bottom: 1px solid var(--line);
+  }
+  .section-head h2{
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: 28px;
+    margin:0;
+  }
+  .section-head span{ color: var(--muted); font-size: 13px; }
+
+  .cat-grid{
+    display:grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-auto-rows: 30vw;
+    gap: 2px;
+    padding: 2px 5vw 0;
+    max-width: 1600px;
+    margin: 0 auto;
+  }
+  .cat-card{
+    position:relative;
+    grid-column: span 3;
+    overflow:hidden;
+    background: var(--bg-soft);
+    border: none;
+    padding:0;
+    text-align: left;
+    color: inherit;
+  }
+  .cat-card:nth-child(1){ grid-column: span 4; }
+  .cat-card:nth-child(2){ grid-column: span 2; }
+  .cat-card:nth-child(3){ grid-column: span 2; }
+  .cat-card:nth-child(4){ grid-column: span 2; }
+  .cat-card:nth-child(5){ grid-column: span 2; grid-row: span 1; }
+
+  .cat-card .cover{
+    position:absolute; inset:0;
+    background-size: cover;
+    background-position: center;
+    transition: transform 0.6s ease;
+  }
+  .cat-card:hover .cover{ transform: scale(1.045); }
+  .cat-card .shade{
+    position:absolute; inset:0;
+    background: linear-gradient(180deg, transparent 45%, rgba(0,0,0,0.75) 100%);
+  }
+  .cat-card .label{
+    position:absolute; left: 24px; bottom: 20px; z-index:2;
+  }
+  .cat-card .label .name{
+    font-family: var(--serif);
+    font-size: 24px;
+    font-weight: 500;
+  }
+  .cat-card .label .count{
+    display:block;
+    font-size: 12px;
+    color: rgba(243,241,236,0.75);
+    margin-top: 4px;
+  }
+  .cat-card .empty-mark{
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    font-family: var(--serif);
+    font-size: 15px;
+    color: rgba(243,241,236,0.28);
+    letter-spacing: 0.04em;
+  }
+
+  @media (max-width: 780px){
+    .cat-grid{ grid-template-columns: repeat(2,1fr); grid-auto-rows: 52vw; }
+    .cat-card, .cat-card:nth-child(1), .cat-card:nth-child(2),
+    .cat-card:nth-child(3), .cat-card:nth-child(4), .cat-card:nth-child(5){
+      grid-column: span 1;
+    }
+  }
+
+  /* ---------- Footer ---------- */
+  footer{
+    padding: 64px 5vw 40px;
+    border-top: 1px solid var(--line);
+    margin-top: 4px;
+    display:flex; flex-wrap:wrap; gap: 24px;
+    align-items:center; justify-content:space-between;
+  }
+  footer .bio{ max-width: 46ch; color: var(--muted); font-size: 13.5px; line-height:1.7; }
+  footer .bio strong{ color: var(--fg); font-weight: 500; }
+  .foot-links{ display:flex; gap: 22px; font-size: 13px; color: var(--muted); }
+  .foot-links a:hover{ color: var(--fg); }
+
+  /* ---------- Gallery view ---------- */
+  .gallery-head{
+    display:flex; align-items:center; gap: 18px;
+    padding: 110px 5vw 24px;
+    border-bottom: 1px solid var(--line);
+  }
+  .back-btn{
+    background:none; border: 1px solid var(--line);
+    color: var(--fg); font-size: 13px;
+    padding: 8px 16px; border-radius: 999px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .back-btn:hover{ border-color: var(--accent); color: var(--accent); }
+  .gallery-head h2{
+    font-family: var(--serif); font-weight: 400;
+    font-size: 26px; margin:0; text-transform: capitalize;
+  }
+  .gallery-head .g-count{ color: var(--muted); font-size: 13px; margin-left:auto; }
+
+  .g-grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 3px;
+    padding: 3px 5vw 100px;
+  }
+  .g-item{
+    position:relative;
+    aspect-ratio: 4/5;
+    overflow:hidden;
+    background: var(--bg-soft);
+  }
+  .g-item img{
+    width:100%; height:100%; object-fit:cover;
+    transition: transform 0.5s ease;
+  }
+  .g-item:hover img{ transform: scale(1.04); }
+  .g-item .g-meta{
+    position:absolute; left:0; right:0; bottom:0;
+    padding: 14px 16px;
+    background: linear-gradient(180deg, transparent, rgba(0,0,0,0.8));
+    display:flex; justify-content:space-between; align-items:flex-end;
+    font-size: 13px;
+  }
+  .g-item .g-price{ color: var(--accent); font-weight:500; }
+
+  .g-empty{
+    padding: 90px 5vw;
+    text-align:center;
+    color: var(--muted);
+  }
+  .g-empty .big{
+    font-family: var(--serif); font-size: 26px; color: var(--fg); margin-bottom: 10px;
+  }
+
+  /* ---------- Lightbox ---------- */
+  .lightbox{
+    position: fixed; inset:0; z-index: 100;
+    background: rgba(6,6,5,0.94);
+    display:none;
+    align-items:center; justify-content:center;
+    padding: 40px 5vw;
+  }
+  .lightbox.active{ display:flex; }
+  .lb-inner{
+    display:flex; gap: 40px;
+    max-width: 1100px; width:100%;
+    max-height: 88vh;
+  }
+  .lb-img-wrap{ flex: 1.4; min-width:0; display:flex; align-items:center; justify-content:center; }
+  .lb-img-wrap img{ max-height: 82vh; max-width:100%; object-fit:contain; }
+  .lb-info{ flex:1; max-width: 320px; display:flex; flex-direction:column; justify-content:center; gap: 14px; }
+  .lb-info .cat-tag{ font-size: 12px; color: var(--accent); text-transform: capitalize; }
+  .lb-info h3{ font-family: var(--serif); font-weight:500; font-size: 26px; margin:0; }
+  .lb-info .price{ font-size: 20px; color: var(--fg); }
+  .lb-buy{
+    background: var(--fg); color: #0b0b0a; border:none;
+    padding: 13px 22px; font-size: 13.5px; font-weight:600;
+    border-radius: 2px; margin-top: 8px;
+  }
+  .lb-buy:hover{ background: var(--accent); }
+  .lb-close{
+    position:absolute; top: 26px; right: 5vw;
+    background:none; border:none; color: var(--fg);
+    font-size: 28px; line-height:1;
+  }
+  .lb-nav{
+    position:absolute; top:50%; transform: translateY(-50%);
+    background:none; border:none; color: var(--fg); font-size: 30px;
+    opacity: 0.6;
+  }
+  .lb-nav:hover{ opacity:1; }
+  .lb-prev{ left: 16px; } .lb-next{ right: 16px; }
+
+  /* ---------- Buy modal ---------- */
+  .modal-backdrop{
+    position: fixed; inset:0; z-index: 110;
+    background: rgba(6,6,5,0.7);
+    display:none; align-items:center; justify-content:center;
+    padding: 24px;
+  }
+  .modal-backdrop.active{ display:flex; }
+  .modal{
+    background: var(--bg-soft); border:1px solid var(--line);
+    max-width: 420px; width:100%; padding: 32px;
+    border-radius: 4px;
+  }
+  .modal h3{ font-family: var(--serif); font-weight:500; font-size:22px; margin: 0 0 6px; }
+  .modal p.sub{ color: var(--muted); font-size: 13px; margin: 0 0 22px; }
+  .field{ margin-bottom: 14px; }
+  .field label{ display:block; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+  .field input, .field select, .field textarea{
+    width:100%; background: var(--bg); border: 1px solid var(--line);
+    color: var(--fg); padding: 10px 12px; font-size: 14px; font-family: inherit;
+    border-radius: 2px;
+  }
+  .field textarea{ resize: vertical; min-height: 70px; }
+  .modal-actions{ display:flex; gap:10px; margin-top: 18px; }
+  .btn-primary{
+    flex:1; background: var(--fg); color:#0b0b0a; border:none;
+    padding: 12px; font-weight:600; font-size: 13.5px; border-radius:2px;
+  }
+  .btn-primary:hover{ background: var(--accent); }
+  .btn-ghost{
+    background:none; border:1px solid var(--line); color: var(--fg);
+    padding: 12px 16px; border-radius:2px; font-size: 13.5px;
+  }
+  .btn-ghost:hover{ border-color: var(--fg); }
+  .modal .success{ color: var(--accent); font-size: 13.5px; margin-top: 12px; display:none; }
+
+  /* ---------- Admin ---------- */
+  .admin-wrap{ padding: 120px 5vw 100px; max-width: 880px; margin:0 auto; }
+  .admin-gate{ max-width: 340px; margin: 40px auto; text-align:center; }
+  .admin-gate h2{ font-family: var(--serif); font-weight:500; font-size:24px; }
+  .admin-gate p{ color: var(--muted); font-size: 13.5px; }
+  .admin-panel{ display:none; }
+  .admin-panel.active{ display:block; }
+  .admin-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom: 36px; }
+  .admin-head h2{ font-family: var(--serif); font-weight:500; font-size: 28px; margin:0; }
+  .logout-btn{ font-size: 12.5px; color: var(--muted); border-bottom: 1px solid var(--line); }
+  .logout-btn:hover{ color: var(--fg); }
+
+  .upload-card{
+    border: 1px dashed var(--line); border-radius: 6px;
+    padding: 28px; margin-bottom: 46px;
+  }
+  .upload-card h3{ font-family: var(--serif); font-weight:500; font-size:18px; margin:0 0 18px; }
+  .form-row{ display:grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom:14px; }
+  @media (max-width:600px){ .form-row{ grid-template-columns:1fr; } }
+  .drop-area{
+    border: 1px solid var(--line); border-radius: 4px;
+    padding: 22px; text-align:center; color: var(--muted);
+    font-size: 13px; margin-bottom: 16px; cursor:pointer;
+  }
+  .drop-area.drag{ border-color: var(--accent); color: var(--accent); }
+  .preview-strip{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom: 16px; }
+  .preview-strip img{ width:70px; height:70px; object-fit:cover; border-radius:3px; }
+
+  .admin-cat-block{ margin-bottom: 40px; }
+  .admin-cat-block h4{
+    font-family: var(--serif); font-weight:500; font-size:18px;
+    text-transform: capitalize; margin: 0 0 14px;
+    padding-bottom: 10px; border-bottom: 1px solid var(--line);
+  }
+  .admin-grid{ display:grid; grid-template-columns: repeat(auto-fill,minmax(140px,1fr)); gap:12px; }
+  .admin-item{ position:relative; border-radius:4px; overflow:hidden; background: var(--bg); }
+  .admin-item img{ width:100%; aspect-ratio:1; object-fit:cover; }
+  .admin-item .ai-meta{ padding: 8px; font-size:11.5px; color: var(--muted); }
+  .admin-item .ai-meta .t{ color: var(--fg); display:block; margin-bottom:2px; }
+  .admin-item .del{
+    position:absolute; top:6px; right:6px; background: rgba(0,0,0,0.65);
+    color:#fff; border:none; width:24px; height:24px; border-radius:50%; font-size:14px;
+  }
+  .admin-empty{ color: var(--muted); font-size: 13px; }
+  .admin-note{
+    margin-top: 40px; padding: 18px 20px; border: 1px solid var(--line);
+    border-radius: 4px; font-size: 12.5px; color: var(--muted); line-height:1.7;
+  }
+  .admin-note strong{ color: var(--fg); }
+
+  .toast{
+    position: fixed; bottom: 28px; left:50%; transform: translateX(-50%);
+    background: var(--fg); color:#0b0b0a; padding: 12px 20px;
+    font-size: 13px; border-radius: 3px; z-index: 200;
+    opacity:0; pointer-events:none; transition: opacity 0.25s ease;
+  }
+  .toast.show{ opacity:1; }
+
+  .setup-banner{
+    position: fixed; inset:0; z-index: 300;
+    background: var(--bg); color: var(--fg);
+    display:flex; align-items:center; justify-content:center;
+    padding: 40px;
+  }
+  .setup-banner.hidden{ display:none; }
+  .setup-box{ max-width: 560px; }
+  .setup-box h1{ font-family: var(--serif); font-weight:500; font-size: 28px; margin: 0 0 14px; }
+  .setup-box p{ color: var(--muted); font-size: 14px; line-height:1.7; }
+  .setup-box code{
+    display:block; background: var(--bg-soft); border:1px solid var(--line);
+    padding: 14px 16px; border-radius:4px; font-size: 12.5px; color: var(--accent);
+    margin: 16px 0; overflow-x:auto; white-space:pre;
+  }
+  .auth-error{ color:#e6a4a4; font-size: 12.5px; margin-top: 8px; display:none; }
+</style>
+</head>
+<body>
+
+<div class="setup-banner hidden" id="setupBanner">
+  <div class="setup-box">
+    <h1>Falta conectar Supabase</h1>
+    <p>Este sitio está listo, pero todavía no tiene dónde guardar las fotos en internet. Abrí este archivo HTML con un editor de texto, buscá <code>SUPABASE_URL</code> y <code>SUPABASE_ANON_KEY</code> cerca del final del archivo y reemplazá esos valores por los de tu propio proyecto de Supabase (Project Settings → API).</p>
+    <p>Mientras tanto podés seguir viendo el diseño, pero la galería y el panel de subida no van a funcionar.</p>
+  </div>
+</div>
+
+<div class="topbar">
+  <a href="#home" class="wordmark" onclick="goHome()">MELINA GONZÁLEZ ALVAREZ</a>
+  <nav>
+    <a href="#home" onclick="goHome()">Portfolio</a>
+    <a href="#admin" onclick="showAdmin()">Fotógrafa</a>
+  </nav>
+</div>
+
+<main>
+
+  <!-- HOME -->
+  <section id="home" class="active">
+    <div class="hero">
+      <div class="hero-inner">
+        <p class="hero-eyebrow">Fotografía documental y de retrato</p>
+        <h1>Melina<br>González Alvarez</h1>
+        <p>Cancha, calle y estudio. Un archivo en construcción: eventos, deporte, retrato y paisaje, disponible para ver y adquirir en impresión.</p>
+      </div>
+      <div class="hero-scroll">Desplazate para ver el archivo</div>
+    </div>
+
+    <div class="section-head">
+      <h2>Archivo</h2>
+      <span>5 colecciones</span>
+    </div>
+
+    <div class="cat-grid" id="catGrid"></div>
+
+    <footer>
+      <p class="bio"><strong>Melina González Alvarez</strong> es fotógrafa, especializada en cobertura de eventos y deporte, retrato y paisaje. Cada colección se actualiza a medida que se suman nuevos trabajos.</p>
+      <div class="foot-links">
+        <a href="mailto:contacto@melinagonzalez.com">contacto@melinagonzalez.com</a>
+        <a href="#admin" onclick="showAdmin()">Acceso fotógrafa</a>
+      </div>
+    </footer>
+  </section>
+
+  <!-- GALLERY -->
+  <section id="gallery">
+    <div class="gallery-head">
+      <button class="back-btn" onclick="goHome()">&larr; Volver</button>
+      <h2 id="galleryTitle">Categoría</h2>
+      <span class="g-count" id="galleryCount"></span>
+    </div>
+    <div class="g-grid" id="galleryGrid"></div>
+  </section>
+
+  <!-- ADMIN -->
+  <section id="admin">
+    <div class="admin-wrap">
+      <div class="admin-gate" id="adminGate">
+        <h2>Panel de la fotógrafa</h2>
+        <p>Ingresá con el email y contraseña que configuraste en Supabase Authentication.</p>
+        <div class="field" style="text-align:left;">
+          <label for="adminEmail">Email</label>
+          <input type="email" id="adminEmail" placeholder="melina@email.com">
+        </div>
+        <div class="field" style="text-align:left;">
+          <label for="adminPass">Contraseña</label>
+          <input type="password" id="adminPass" placeholder="••••••••">
+        </div>
+        <button class="btn-primary" style="width:100%;" onclick="tryLogin()">Entrar</button>
+        <p class="auth-error" id="authError"></p>
+      </div>
+
+      <div class="admin-panel" id="adminPanel">
+        <div class="admin-head">
+          <h2>Gestionar fotos</h2>
+          <button class="logout-btn" onclick="logout()">Cerrar sesión</button>
+        </div>
+
+        <div class="upload-card">
+          <h3>Subir nuevas fotos</h3>
+          <div class="form-row">
+            <div class="field">
+              <label for="upCategory">Categoría</label>
+              <select id="upCategory">
+                <option value="eventos">Eventos</option>
+                <option value="rugby">Rugby</option>
+                <option value="hockey">Hockey</option>
+                <option value="retratos">Retratos</option>
+                <option value="paisajes">Paisajes</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="upPrice">Precio (opcional, se aplica a todas)</label>
+              <input type="text" id="upPrice" placeholder="ej: $45.000">
+            </div>
+          </div>
+          <div class="field">
+            <label for="upTitle">Título base (opcional)</label>
+            <input type="text" id="upTitle" placeholder="ej: Final de la liga">
+          </div>
+          <div class="drop-area" id="dropArea" onclick="document.getElementById('fileInput').click()">
+            Hacé clic para elegir imágenes, o arrastralas acá
+          </div>
+          <input type="file" id="fileInput" accept="image/*" multiple style="display:none;">
+          <div class="preview-strip" id="previewStrip"></div>
+          <button class="btn-primary" onclick="uploadPhotos()">Agregar a la categoría</button>
+        </div>
+
+        <div id="adminCatBlocks"></div>
+
+        <div class="admin-note">
+          <strong>Cómo funciona el almacenamiento:</strong> las fotos que subís acá se guardan en tu proyecto de Supabase (Storage + base de datos), no en este dispositivo. Cualquier persona que entre al sitio, desde cualquier celular o computadora, va a ver las mismas fotos.
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox">
+  <button class="lb-close" onclick="closeLightbox()">&times;</button>
+  <button class="lb-nav lb-prev" onclick="navLightbox(-1)">&#8249;</button>
+  <button class="lb-nav lb-next" onclick="navLightbox(1)">&#8250;</button>
+  <div class="lb-inner">
+    <div class="lb-img-wrap"><img id="lbImg" src="" alt=""></div>
+    <div class="lb-info">
+      <span class="cat-tag" id="lbCat"></span>
+      <h3 id="lbTitle"></h3>
+      <span class="price" id="lbPrice"></span>
+      <button class="lb-buy" onclick="openBuyModal()">Comprar esta foto</button>
+    </div>
+  </div>
+</div>
+
+<!-- BUY MODAL -->
+<div class="modal-backdrop" id="buyModal">
+  <div class="modal">
+    <h3>Consulta de compra</h3>
+    <p class="sub" id="buySub">Completá tus datos y te contactamos para coordinar el pago y la entrega.</p>
+    <div class="field">
+      <label for="buyName">Nombre</label>
+      <input type="text" id="buyName" placeholder="Tu nombre">
+    </div>
+    <div class="field">
+      <label for="buyEmail">Email</label>
+      <input type="email" id="buyEmail" placeholder="tu@email.com">
+    </div>
+    <div class="field">
+      <label for="buyMsg">Mensaje (opcional)</label>
+      <textarea id="buyMsg" placeholder="Tamaño de impresión, uso, etc."></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeBuyModal()">Cancelar</button>
+      <button class="btn-primary" onclick="sendBuyRequest()">Enviar consulta</button>
+    </div>
+    <p class="success" id="buySuccess">¡Listo! Se abrió tu app de mail con la consulta cargada.</p>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ---------------- Supabase config ---------------- */
+/* Reemplazá estos dos valores por los de TU proyecto de Supabase:
+   supabase.com → tu proyecto → Project Settings → API */
+const SUPABASE_URL = "https://eiugypznkgavxxiwammf.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVpdWd5cHpua2dhdnh4aXdhbW1mIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg5NjYyMDEsImV4cCI6MjEwNDU0MjIwMX0.rJpakbaIWUY9MWIt0pJiniykjEDl2mlHiMidQaZWe4o";
+
+const CATEGORIES = ["eventos","rugby","hockey","retratos","paisajes"];
+const OWNER_EMAIL = "contacto@melinagonzalez.com";
+
+const catLabels = {
+  eventos: "Eventos", rugby: "Rugby", hockey: "Hockey",
+  retratos: "Retratos", paisajes: "Paisajes"
+};
+
+let photos = [];
+let backendReady = false;
+let sb;
+
+async function fetchPhotos(){
+  if(!backendReady) return;
+  const { data, error } = await sb.from('photos').select('*').order('created_at', { ascending: true });
+  if(error){
+    console.error(error);
+    showToast("Error al cargar las fotos: revisá las políticas de la tabla");
+    return;
+  }
+  photos = data.map(row => ({
+    id: row.id,
+    category: row.category,
+    title: row.title,
+    price: row.price,
+    imageUrl: row.image_url,
+    storagePath: row.storage_path
+  }));
+  renderCategoryGrid();
+  if(currentCat) renderGallery(currentCat);
+  if(document.getElementById('adminPanel').classList.contains('active')) renderAdminGrids();
+}
+
+function refreshAuthUI(session){
+  const loggedIn = !!session;
+  document.getElementById('adminGate').style.display = loggedIn ? 'none' : 'block';
+  document.getElementById('adminPanel').classList.toggle('active', loggedIn);
+  if(loggedIn) renderAdminGrids();
+}
+
+if(SUPABASE_URL === "TU_SUPABASE_URL"){
+  document.getElementById('setupBanner').classList.remove('hidden');
+} else {
+  sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  backendReady = true;
+
+  sb.auth.getSession().then(({ data })=> refreshAuthUI(data.session));
+  sb.auth.onAuthStateChange((_event, session)=> refreshAuthUI(session));
+
+  fetchPhotos();
+}
+
+
+/* Subtle generated pattern for hero + empty category tiles (no external images needed) */
+function svgPattern(seed, tone){
+  const c1 = tone || "#1a1917";
+  return `data:image/svg+xml;utf8,` + encodeURIComponent(
+    `<svg xmlns='http://www.w3.org/2000/svg' width='400' height='400'>
+      <rect width='400' height='400' fill='${c1}'/>
+      <circle cx='${60+seed*40}' cy='${80+seed*20}' r='140' fill='rgba(255,255,255,0.03)'/>
+      <circle cx='${320-seed*30}' cy='320' r='180' fill='rgba(255,255,255,0.025)'/>
+    </svg>`
+  );
+}
+document.documentElement.style.setProperty('--hero-pattern', `url("${svgPattern(2,'#171614')}")`);
+
+/* ---------------- Routing ---------------- */
+function setActiveSection(id){
+  document.querySelectorAll('main > section').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({top:0, behavior:'instant' in document.documentElement.style ? 'instant' : 'auto'});
+}
+function goHome(){ setActiveSection('home'); renderCategoryGrid(); location.hash = 'home'; }
+function openCategory(cat){
+  renderGallery(cat);
+  setActiveSection('gallery');
+  location.hash = 'g/' + cat;
+}
+function showAdmin(){
+  setActiveSection('admin');
+  location.hash = 'admin';
+  refreshAdminGate();
+}
+
+/* ---------------- Home grid ---------------- */
+function renderCategoryGrid(){
+  const grid = document.getElementById('catGrid');
+  grid.innerHTML = "";
+  CATEGORIES.forEach((cat, i)=>{
+    const list = photos.filter(p=>p.category===cat);
+    const cover = list[list.length-1];
+    const card = document.createElement('button');
+    card.className = 'cat-card';
+    card.onclick = ()=>openCategory(cat);
+    card.innerHTML = `
+      <div class="cover" style="background-image:${cover ? `url('${cover.imageUrl}')` : `url('${svgPattern(i,'#181715')}')`}"></div>
+      <div class="shade"></div>
+      ${!cover ? `<div class="empty-mark">Próximamente</div>` : ``}
+      <div class="label">
+        <span class="name">${catLabels[cat]}</span>
+        <span class="count">${list.length} ${list.length===1?'foto':'fotos'}</span>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+/* ---------------- Gallery ---------------- */
+let currentCat = null;
+let currentList = [];
+let currentIndex = 0;
+
+function renderGallery(cat){
+  currentCat = cat;
+  currentList = photos.filter(p=>p.category===cat);
+  document.getElementById('galleryTitle').textContent = catLabels[cat];
+  document.getElementById('galleryCount').textContent = currentList.length + (currentList.length===1?' foto':' fotos');
+  const grid = document.getElementById('galleryGrid');
+  if(currentList.length === 0){
+    grid.innerHTML = `<div class="g-empty" style="grid-column:1/-1;">
+      <div class="big">Todavía no hay fotos acá</div>
+      <p>Esta colección se va a completar pronto.</p>
+    </div>`;
+    return;
+  }
+  grid.innerHTML = currentList.map((p, idx)=>`
+    <div class="g-item" onclick="openLightbox(${idx})">
+      <img src="${p.imageUrl}" alt="${p.title || catLabels[cat]}">
+      <div class="g-meta">
+        <span>${p.title || catLabels[cat]}</span>
+        ${p.price ? `<span class="g-price">${p.price}</span>` : ``}
+      </div>
+    </div>
+  `).join("");
+}
+
+/* ---------------- Lightbox ---------------- */
+function openLightbox(idx){
+  currentIndex = idx;
+  const p = currentList[idx];
+  document.getElementById('lbImg').src = p.imageUrl;
+  document.getElementById('lbCat').textContent = catLabels[p.category];
+  document.getElementById('lbTitle').textContent = p.title || catLabels[p.category];
+  document.getElementById('lbPrice').textContent = p.price || "";
+  document.getElementById('lightbox').classList.add('active');
+}
+function closeLightbox(){ document.getElementById('lightbox').classList.remove('active'); }
+function navLightbox(dir){
+  currentIndex = (currentIndex + dir + currentList.length) % currentList.length;
+  openLightbox(currentIndex);
+}
+document.addEventListener('keydown', (e)=>{
+  if(!document.getElementById('lightbox').classList.contains('active')) return;
+  if(e.key === 'Escape') closeLightbox();
+  if(e.key === 'ArrowRight') navLightbox(1);
+  if(e.key === 'ArrowLeft') navLightbox(-1);
+});
+
+/* ---------------- Buy modal ---------------- */
+function openBuyModal(){
+  const p = currentList[currentIndex];
+  document.getElementById('buySub').textContent =
+    `Consulta por "${p.title || catLabels[p.category]}"${p.price ? ' — ' + p.price : ''}. Te respondemos por email para coordinar el pago y la entrega.`;
+  document.getElementById('buySuccess').style.display = 'none';
+  document.getElementById('buyModal').classList.add('active');
+}
+function closeBuyModal(){ document.getElementById('buyModal').classList.remove('active'); }
+function sendBuyRequest(){
+  const p = currentList[currentIndex];
+  const name = document.getElementById('buyName').value.trim();
+  const email = document.getElementById('buyEmail').value.trim();
+  const msg = document.getElementById('buyMsg').value.trim();
+  if(!name || !email){
+    showToast("Completá tu nombre y email para continuar");
+    return;
+  }
+  const subject = encodeURIComponent(`Consulta de compra: ${p.title || catLabels[p.category]}`);
+  const body = encodeURIComponent(
+    `Foto: ${p.title || catLabels[p.category]}\nCategoría: ${catLabels[p.category]}\nPrecio: ${p.price || 'a consultar'}\n\nNombre: ${name}\nEmail: ${email}\nMensaje: ${msg || '-'}`
+  );
+  window.location.href = `mailto:${OWNER_EMAIL}?subject=${subject}&body=${body}`;
+  document.getElementById('buySuccess').style.display = 'block';
+}
+
+/* ---------------- Admin: auth ---------------- */
+function refreshAdminGate(){
+  // El estado real lo maneja sb.auth.onAuthStateChange (ver arriba).
+  // Esta función solo limpia el mensaje de error al reabrir el panel.
+  const errEl = document.getElementById('authError');
+  if(errEl) errEl.style.display = 'none';
+}
+async function tryLogin(){
+  if(!backendReady){ showToast("Todavía no conectaste Supabase (ver banner de configuración)"); return; }
+  const email = document.getElementById('adminEmail').value.trim();
+  const pass = document.getElementById('adminPass').value;
+  const errEl = document.getElementById('authError');
+  if(!email || !pass){ showToast("Completá email y contraseña"); return; }
+  const { error } = await sb.auth.signInWithPassword({ email, password: pass });
+  if(error){
+    errEl.textContent = "No se pudo iniciar sesión: revisá el email y la contraseña.";
+    errEl.style.display = 'block';
+  } else {
+    errEl.style.display = 'none';
+  }
+}
+function logout(){
+  if(backendReady) sb.auth.signOut();
+}
+
+/* ---------------- Admin: upload ---------------- */
+let pendingFiles = [];
+const dropArea = document.getElementById('dropArea');
+const fileInput = document.getElementById('fileInput');
+
+fileInput.addEventListener('change', (e)=> handleFiles(e.target.files));
+['dragover','dragenter'].forEach(ev=>dropArea.addEventListener(ev, e=>{ e.preventDefault(); dropArea.classList.add('drag'); }));
+['dragleave','drop'].forEach(ev=>dropArea.addEventListener(ev, e=>{ e.preventDefault(); dropArea.classList.remove('drag'); }));
+dropArea.addEventListener('drop', e=> handleFiles(e.dataTransfer.files));
+
+function handleFiles(fileList){
+  pendingFiles = Array.from(fileList).filter(f=>f.type.startsWith('image/'));
+  const strip = document.getElementById('previewStrip');
+  strip.innerHTML = "";
+  pendingFiles.forEach(f=>{
+    const url = URL.createObjectURL(f);
+    const img = document.createElement('img');
+    img.src = url;
+    strip.appendChild(img);
+  });
+  if(pendingFiles.length){
+    showToast(`${pendingFiles.length} imagen(es) lista(s) para subir`);
+  }
+}
+
+async function uploadPhotos(){
+  if(!backendReady){ showToast("Todavía no conectaste Supabase (ver banner de configuración)"); return; }
+  if(pendingFiles.length === 0){ showToast("Elegí al menos una imagen"); return; }
+  const { data: sessionData } = await sb.auth.getSession();
+  if(!sessionData.session){ showToast("Iniciá sesión de nuevo antes de subir"); return; }
+
+  const category = document.getElementById('upCategory').value;
+  const baseTitle = document.getElementById('upTitle').value.trim();
+  const price = document.getElementById('upPrice').value.trim();
+
+  showToast(`Subiendo ${pendingFiles.length} imagen(es)...`);
+
+  for(let i=0; i<pendingFiles.length; i++){
+    const file = pendingFiles[i];
+    const storagePath = `${category}/${Date.now()}_${i}_${file.name}`;
+
+    const { error: upErr } = await sb.storage.from('photos').upload(storagePath, file);
+    if(upErr){
+      console.error(upErr);
+      showToast("Error al subir una imagen: revisá las políticas del bucket");
+      continue;
+    }
+    const { data: urlData } = sb.storage.from('photos').getPublicUrl(storagePath);
+
+    const { error: insErr } = await sb.from('photos').insert({
+      category,
+      title: pendingFiles.length > 1 && baseTitle ? `${baseTitle} ${i+1}` : baseTitle,
+      price,
+      image_url: urlData.publicUrl,
+      storage_path: storagePath
+    });
+    if(insErr){
+      console.error(insErr);
+      showToast("Error al guardar los datos de la foto: revisá las políticas de la tabla");
+    }
+  }
+
+  pendingFiles = [];
+  document.getElementById('previewStrip').innerHTML = "";
+  document.getElementById('fileInput').value = "";
+  document.getElementById('upTitle').value = "";
+  document.getElementById('upPrice').value = "";
+  showToast("Fotos agregadas al portfolio");
+  fetchPhotos();
+}
+
+function renderAdminGrids(){
+  const wrap = document.getElementById('adminCatBlocks');
+  wrap.innerHTML = CATEGORIES.map(cat=>{
+    const list = photos.filter(p=>p.category===cat);
+    return `
+      <div class="admin-cat-block">
+        <h4>${catLabels[cat]} · ${list.length}</h4>
+        ${list.length === 0
+          ? `<p class="admin-empty">Sin fotos todavía.</p>`
+          : `<div class="admin-grid">
+              ${list.map(p=>`
+                <div class="admin-item">
+                  <img src="${p.imageUrl}" alt="${p.title||''}">
+                  <button class="del" title="Eliminar" onclick="deletePhoto('${p.id}','${p.storagePath}')">&times;</button>
+                  <div class="ai-meta">
+                    <span class="t">${p.title || '(sin título)'}</span>
+                    ${p.price || ''}
+                  </div>
+                </div>
+              `).join('')}
+            </div>`
+        }
+      </div>
+    `;
+  }).join('');
+}
+
+async function deletePhoto(id, storagePath){
+  if(!backendReady) return;
+  try{
+    await sb.from('photos').delete().eq('id', id);
+    if(storagePath) await sb.storage.from('photos').remove([storagePath]);
+    showToast("Foto eliminada");
+    fetchPhotos();
+  }catch(err){
+    console.error(err);
+    showToast("No se pudo eliminar la foto");
+  }
+}
+
+/* ---------------- Toast ---------------- */
+let toastTimer;
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=> t.classList.remove('show'), 2600);
+}
+
+/* ---------------- Init / simple hash routing ---------------- */
+function initFromHash(){
+  const hash = location.hash.replace('#','');
+  if(hash.startsWith('g/')){
+    const cat = hash.slice(2);
+    if(CATEGORIES.includes(cat)){ openCategory(cat); return; }
+  }
+  if(hash === 'admin'){ showAdmin(); return; }
+  goHome();
+}
+window.addEventListener('hashchange', initFromHash);
+renderCategoryGrid();
+initFromHash();
+</script>
+
+</body>
+</html>
